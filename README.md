@@ -18,8 +18,8 @@ with pattern-based pruning to skip more rows of CNN inference computation on a P
   #### This code is for running main_loss_v1.py.
   
   #### Check a text before running this code.
-  You have to input below parameters.
-  Before the running, please check the python code file for the exact usage
+  * You have to input below parameters.
+  * Before the running, please check the python code file for the exact usage
   
   name_list : ["original", "patdnn", "pconv", "ours"] - define the pattern set
   numsets_list : [1, 4, 12, 16] - 
