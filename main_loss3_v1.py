@@ -106,8 +106,8 @@ parser.add_argument('--adam_epsilon', default=1e-8, type=float, help='adam epsil
 parser.add_argument('--rho',        default=1, type=float,   help='set rho') # original 6e-1?
 #parser.add_argument('--rho',        default=1000, type=float,   help='set rho')
 parser.add_argument('--connect_perc',  default=1, type=float, help='connectivity pruning ratio')
-parser.add_argument('--epoch',      default=1, type=int,      help='set epochs') # 60
-parser.add_argument('--re_epoch',   default=1, type=int,       help='set retrain epochs') # 100
+parser.add_argument('--epoch',      default=60, type=int,      help='set epochs') # 60
+parser.add_argument('--re_epoch',   default=100, type=int,       help='set retrain epochs') # 100
 parser.add_argument('--num_sets',   default='4', type=int,      help='# of pattern sets')
 parser.add_argument('--exp',        default='test', type=str,   help='test or not')
 parser.add_argument('--l2',         default=False, action='store_true', help='apply l3 regularization')
