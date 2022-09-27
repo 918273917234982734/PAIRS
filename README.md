@@ -22,8 +22,13 @@ with pattern-based pruning to skip more rows of CNN inference computation on a P
   * Before the running, please check the python code file for the exact usage
   
   name_list : ["original", "patdnn", "pconv", "ours"] - define the pattern set
-  numsets_list : [1, 4, 12, 16] - 
+  
+  numsets_list : [1, 4, 12, 16] - the size the pattern set
+  
   mask_list : [1, 2, 3, 4, 5] - the number of masks that have zero
+  
   withoc_list : [0, 1] - defined the pattern dimension (kernel-wise or array-wise 4D-shaped pattern)
+  
   wb_list : [2] - weight bit-precision
+  
   ac : [512] - the size of PIM array columns
