@@ -8,3 +8,8 @@ by 21.1% within 2% accuracy loss, while the prior work fails to reduce the compu
 ### This code is based on https://github.com/7bvcxz/PatDNN
 
 ### Please check run_script.py before the training
+  #### main_loss3_v1.py 
+    * base code
+  #### run.script.py 
+    * running for main_loss_v1.py with defining the parameters
+    
