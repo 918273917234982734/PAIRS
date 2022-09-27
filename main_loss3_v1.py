@@ -58,8 +58,7 @@ def ttest(args, model, device, test_loader, pattern_set, Z, Y, U, V):
     loss_y /= len(test_loader.dataset)
     prec = 100. * correct / len(test_loader.dataset)
     print('Accuracy : {:.2f}, Cross Entropy: {:f}, Z loss: {:f}, Y loss: {:f}'.format(prec, loss_c, loss_z, loss_y))
-    #print('Test set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-    #    test_loss, correct, len(test_loader.dataset), prec))
+
 
     return prec
 
@@ -94,7 +93,7 @@ def retrain(args, model, mask, device, train_loader, test_loader, optimizer):
         optimizer.prune_step(mask)
 
 
-##### Settings #########################################################################                      3x3에서는 patdnn을 따라가도록?
+##### Settings #########################################################################
 parser = argparse.ArgumentParser(description='Pytorch PatDNN training')
 # parser.add_argument('--model',      default='resnet18',         help='select model')
 parser.add_argument('--dir',        default='/Data',           help='dataset root')
@@ -148,7 +147,7 @@ stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(formatter)
 logger.addHandler(stream_handler)
 
-file_name = './log/resnet20/%s/0729/%s/%dx%d_epoch%d_reepoch%d_%s_wb%d_mask%d_numset%d_withoc%d_test.log'%(args.dataset, args.method, args.ar, args.ac, args.epoch, args.re_epoch, args.method, args.wb, args.mask, args.num_sets, args.withoc)
+file_name = './log/test.log'
 
 file_handler = logging.FileHandler(file_name)
 file_handler.setFormatter(formatter)
