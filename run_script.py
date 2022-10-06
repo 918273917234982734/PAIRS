@@ -40,7 +40,7 @@ This code runs main_loss3_v1.py.
         input 4
     elif 7-entry :
         input 12
-    elifr 5-entry :
+    elif 5-entry :
         input 16
 
 4. withoc : pattern dimension 
