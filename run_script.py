@@ -44,8 +44,9 @@ This code runs main_loss3_v1.py.
         input 16
 
 4. withoc : pattern dimension 
-    0 : the kernel-wise pattern 
-    1 : the array-wise 4D-shaped pattern
+    0 : kernel-wise pattern 
+    1 : array-wise pattern
+    2 : block-wise pattern
 
 5. wb_list : weight bit precision
     2 : 2-bit weight (default)
