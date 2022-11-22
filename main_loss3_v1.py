@@ -20,6 +20,8 @@ from utils_1 import *
 import logging
 import random
 
+import torch.backends.cudnn as cudnn
+
 
 ##### train, test, retrain function #######################################################
 def train(args, model, device, pattern_set, train_loader, test_loader, optimizer, Z, Y, U, V):
@@ -58,7 +60,8 @@ def ttest(args, model, device, test_loader, pattern_set, Z, Y, U, V):
     loss_y /= len(test_loader.dataset)
     prec = 100. * correct / len(test_loader.dataset)
     print('Accuracy : {:.2f}, Cross Entropy: {:f}, Z loss: {:f}, Y loss: {:f}'.format(prec, loss_c, loss_z, loss_y))
-
+    #print('Test set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+    #    test_loss, correct, len(test_loader.dataset), prec))
 
     return prec
 
@@ -93,7 +96,7 @@ def retrain(args, model, mask, device, train_loader, test_loader, optimizer):
         optimizer.prune_step(mask)
 
 
-##### Settings #########################################################################
+
 parser = argparse.ArgumentParser(description='Pytorch PatDNN training')
 # parser.add_argument('--model',      default='resnet18',         help='select model')
 parser.add_argument('--dir',        default='/Data',           help='dataset root')
@@ -105,9 +108,10 @@ parser.add_argument('--alpha',      default=5e-4, type=float,   help='set l2 reg
 parser.add_argument('--adam_epsilon', default=1e-8, type=float, help='adam epsilon')
 parser.add_argument('--rho',        default=1, type=float,   help='set rho') # original 6e-1?
 #parser.add_argument('--rho',        default=1000, type=float,   help='set rho')
+#parser.add_argument('--rho',        default=1000, type=float,   help='set rho')
 parser.add_argument('--connect_perc',  default=1, type=float, help='connectivity pruning ratio')
-parser.add_argument('--epoch',      default=60, type=int,      help='set epochs') # 60
-parser.add_argument('--re_epoch',   default=100, type=int,       help='set retrain epochs') # 100
+parser.add_argument('--epoch',      default=80, type=int,      help='set epochs') # 60
+parser.add_argument('--re_epoch',   default=120, type=int,       help='set retrain epochs') # 100
 parser.add_argument('--num_sets',   default='4', type=int,      help='# of pattern sets')
 parser.add_argument('--exp',        default='test', type=str,   help='test or not')
 parser.add_argument('--l2',         default=False, action='store_true', help='apply l3 regularization')
@@ -121,6 +125,7 @@ parser.add_argument('--ar', type=int, default=512)
 parser.add_argument('--ac', type=int, default=512)
 parser.add_argument('--ab', type=int, default=32)
 parser.add_argument('--wb', type=int, default=2)
+parser.add_argument('--seed', type=int, default=1992)
 args = parser.parse_args()
 print(args)
 
@@ -128,6 +133,14 @@ print(args)
 candidate = args.mask
 args.ac = int(args.ac/args.wb)
 print(f'Actual used array columns = {args.ac}')
+
+torch.manual_seed(args.seed)
+torch.cuda.manual_seed(args.seed)
+torch.cuda.manual_seed_all(args.seed)
+np.random.seed(args.seed)
+cudnn.benchmark = False
+cudnn.deterministic = True
+random.seed(args.seed)
 
 GPU_NUM = args.GPU # GPU
 # device = torch.device(f'cuda:{GPU_NUM}' if torch.cuda.is_available() else 'cpu')
@@ -147,7 +160,7 @@ stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(formatter)
 logger.addHandler(stream_handler)
 
-file_name = './log/test.log'
+file_name = './log/resnet20/%s/1118/%s/%dx%d_epoch%d_reepoch%d_%s_wb%d_mask%d_numset%d_withoc%d_test.log'%(args.dataset, args.method, args.ar, args.ac, args.epoch, args.re_epoch, args.method, args.wb, args.mask, args.num_sets, args.withoc)
 
 file_handler = logging.FileHandler(file_name)
 file_handler.setFormatter(formatter)
@@ -265,6 +278,11 @@ if args.method == 'patdnn' :
     print('pretrained model uploaded...')
     pre_model.load_state_dict(torch.load('./pre_trained_0729.pt'), strict=True)
     # print("pre-trained model:\n", pre_model)
+
+elif args.method == 'pruned_sparse' :
+    print('pretrained model uploaded...')
+    pre_model.load_state_dict(torch.load('./pre_trained_1119_sparse.pt'), strict=True)
+    # print("pre-trained model:\n", pre_model)
 else :
     print('new model uploaded...')
 
@@ -276,7 +294,7 @@ print('Dataset Loaded')
 
 ##### Find Pattern Set #####
 print('\nFinding Pattern Set...')
-if args.method == 'patdnn' or args.method == 'ours' :
+if args.method == 'patdnn' :
     if os.path.isfile('pattern_set_'+ args.dataset + '_mask_' + str(args.mask) + '_0729.npy') is False:
         pattern_set = pattern_setter(pre_model, candidate)
         np.save('pattern_set_'+ args.dataset + '_mask_' + str(args.mask) + '_0729.npy', pattern_set)
@@ -284,6 +302,16 @@ if args.method == 'patdnn' or args.method == 'ours' :
         pattern_set = np.load('pattern_set_'+ args.dataset + '_mask_' + str(args.mask) + '_0729.npy')
 
     pattern_set = pattern_set[:args.num_sets, :]
+
+elif args.method == 'pruned_sparse' :
+    if os.path.isfile('pattern_set_'+ args.dataset + '_mask_' + str(args.mask) + '_0729_v.npy') is False:
+        pattern_set = pattern_setter_v(pre_model, candidate)
+        np.save('pattern_set_'+ args.dataset + '_mask_' + str(args.mask) + '_0729_v.npy', pattern_set)
+    else:
+        pattern_set = np.load('pattern_set_'+ args.dataset + '_mask_' + str(args.mask) + '_0729_v.npy')
+
+    pattern_set = pattern_set[:args.num_sets, :]
+
 
 elif args.method == 'random' :
     candi_list = []
@@ -296,10 +324,6 @@ elif args.method == 'random' :
         candi_list.append(one_list)
     
     pattern_set = np.array(candi_list)
-
-    '''
-    Gernerate clicktrain pattern set
-    '''
 
 elif args.method == 'original' :
     pattern_set = np.array([[1,1,1,1,1,1,1,1,1]])
@@ -351,6 +375,7 @@ Z, Y, U, V = initialize_Z_Y_U_V(model)
 
 #WarmUp                                            
 optimizer = PruneAdam(model.named_parameters(), lr=args.lr, eps=args.adam_epsilon)
+# optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
 print("-"*50)
 images = [32, 32, 32, 32, 32, 32, 16, 16, 16, 16, 16, 8, 8, 8, 8, 8]
 pwr = []
@@ -398,7 +423,8 @@ for epoch in range(5):
 
 
 # Optimizer
-optimizer = PruneAdam(model.named_parameters(), lr=args.lr, eps=args.adam_epsilon)
+# optimizer = PruneAdam(model.named_parameters(), lr=args.lr, eps=args.adam_epsilon)
+optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=3e-4)
 print("-"*50)
 print('Lego training!!!')
 print("-"*50)
@@ -531,7 +557,7 @@ for module in model.named_modules():
 """
 
 
-
+# torch.save(pre_model.state_dict(), 'pre_trained_1119_sparse.pt')
 
 
 
