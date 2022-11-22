@@ -13,6 +13,6 @@ by 21.1% within 2% accuracy loss, while the prior work fails to reduce the compu
   #### run_script.py 
     * running for main_loss_v1.py with defining the parameters
   ### pattern_setter.py
-    * several functions for the pattern
+    * several functions for generating the pattern
     
     * define the pattern dimension (kernel-wise (KW), block-wise (BW) and array-wise (AW) )
