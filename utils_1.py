@@ -48,7 +48,7 @@ def SDK (image_col, image_row, filter_col, filter_row, in_channel, out_channel, 
         else :
             break
         
-    return  math.sqrt(w[0])
+    return  cycle, math.sqrt(w[0]), math.sqrt(w[0])
 
 
 
