@@ -25,9 +25,8 @@ def SDK (image_col, image_row, filter_col, filter_row, in_channel, out_channel, 
     new_array_row = array_row * used_row
     new_array_col = array_col * used_col
 
-    # initialize
     cycle = []
-    w = [] # pw 크기
+    w = [] 
     w.append(filter_row*filter_col)
     cycle.append(used_row*used_col*(image_row-filter_row+1)*(image_col-filter_col+1))
     
@@ -51,46 +50,6 @@ def SDK (image_col, image_row, filter_col, filter_row, in_channel, out_channel, 
         
     return  math.sqrt(w[0])
 
-
-def SDK_a (image_col, image_row, filter_col, filter_row, in_channel, out_channel, \
-                    array_row, array_col) :
-    
-
-    # initialize
-    cycle = [100000]
-    w = [filter_row*filter_col] # pw 크기
-    num_windows, ar, ac = [0], [0], [0]
-    
-    i=0
-    while True :
-        i += 1
-        pw_row = filter_row + i - 1 
-        pw_col = filter_col + i - 1
-
-        parallel_window_row = math.ceil((image_row - (filter_row + i) + 1)/i) + 1
-        parallel_window_col = math.ceil((image_col - (filter_col + i) + 1)/i) + 1
-
-        ARC = math.ceil((pw_row*pw_col*in_channel)/array_row)
-        ACC = math.ceil((i*i*out_channel)/array_col)
-        if parallel_window_row * parallel_window_row * ARC * ACC <= cycle[0] :
-            del cycle[0]
-            del w[0]
-            del ar[0]
-            del ac[0]
-            del num_windows[0]
-            
-            num_w = parallel_window_row * parallel_window_col
-            num_windows.append(num_w)
-            ar.append(ARC)
-            ac.append(ACC)
-            cycle.append(num_w * ARC * ACC)
-            w.append(pw_row*pw_col)
-
-
-        if pw_row >= image_row :
-            break
-    
-    return int(math.sqrt(w[0]))
 
 
 class CrossEntropyLossSoft(torch.nn.modules.loss._Loss):
@@ -201,7 +160,7 @@ class SwitchBatchNorm2d(nn.Module):
         x = self.bn_dict[str(self.abit)](x)
         return x
 
-class SwitchBatchNorm2d_(SwitchBatchNorm2d) : ## 만든거
+class SwitchBatchNorm2d_(SwitchBatchNorm2d) : 
     def __init__(self, w_bit, num_features) :
         super(SwitchBatchNorm2d_, self).__init__(num_features=num_features, w_bit=w_bit)
         self.w_bit = w_bit      
@@ -234,16 +193,6 @@ class Conv2d_Q_(Conv2d_Q): ## original
         return F.conv2d(input, weight_q, self.bias, self.stride, self.padding, self.dilation, self.groups)
 
 
-
-
-'''
-# Option 1: write directly to data
-wfx.weight.data = wfx.weight * mask_use
-
-# Option 2: convert result to nn.Parameter and write to weight
-wfx.weight = nn.Parameter(wfx.weight * mask_use)
-'''
-    
 
 # def conv2d_quantize_fn(w_bit):
 #     class Conv2d_Q_(Conv2d_Q):
