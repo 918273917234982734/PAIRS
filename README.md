@@ -12,9 +12,10 @@ Processing-in-memory (PIM) architecture is becoming a promising candidate for co
   ### dataset: dataset [cifar10, cifar100]
   ### withoc_list: pattern demension [2], note that default is 2 to use row-wise pruning
   ### ar: size of PIM array rows
-  ### ac: size of PIM array cols
+  ### ac 
+    size of PIM array cols
   
-### Try below codes
+## Try below codes
   #### main_loss3_v1.py 
     * base code
   #### run_script.py 
