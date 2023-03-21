@@ -7,7 +7,8 @@ Processing-in-memory (PIM) architecture is becoming a promising candidate for co
 ### This code is based on https://github.com/7bvcxz/PatDNN
 
 ## Before using the codes, You have to check the parameters.
-  ### model: networks [ResNet20_Q, WRN16-4_Q] 
+  ### 1. model (network): 
+   ####  [ResNet20_Q, WRN16-4_Q] 
   ### method: pattern shape [patdnn, random, ours, original], note that original is No pruning
   ### dataset: dataset [cifar10, cifar100]
   ### withoc_list: pattern demension [2], note that default is 2 to use row-wise pruning
