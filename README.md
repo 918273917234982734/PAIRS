@@ -6,10 +6,10 @@ Processing-in-memory (PIM) architecture is becoming a promising candidate for co
 
 ### This code is based on https://github.com/7bvcxz/PatDNN
 
-### To train ResNet-20 on cifar10, try below codes
+### Try below codes
   #### main_loss3_v1.py 
     * base code
   #### run_script.py 
-    * running for main_loss_v1.py with defining the parameters
-  ### pattern_setter.py
-    * several functions for generating the pattern
+    * running for main_loss_v1.py, ResNet-20 on cifar-10
+  ### run_script.py_WRN16.py
+    * running for main_loss_v1.py, WRN16-4 on cifar-100
