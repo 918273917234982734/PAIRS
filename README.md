@@ -6,10 +6,19 @@ Processing-in-memory (PIM) architecture is becoming a promising candidate for co
 
 ### This code is based on https://github.com/7bvcxz/PatDNN
 
+## Before using the codes, You have to check the parameters.
+  ### model: networks [ResNet20_Q, WRN16-4_Q] 
+  ### method: pattern shape [patdnn, random, ours, original], note that original is No pruning
+  ### dataset: dataset [cifar10, cifar100]
+  ### withoc_list: pattern demension [2], note that default is 2 to use row-wise pruning
+  ### ar: size of PIM array rows
+  ### ac: size of PIM array cols
+  
 ### Try below codes
   #### main_loss3_v1.py 
     * base code
   #### run_script.py 
     * running for main_loss_v1.py, ResNet-20 on cifar-10
-  ### run_script.py_WRN16.py
+  #### run_script_WRN16.py
     * running for main_loss_v1.py, WRN16-4 on cifar-100
+
